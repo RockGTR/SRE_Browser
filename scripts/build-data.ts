@@ -17,10 +17,14 @@ import { loadEmployerRegistry } from './registry/io';
 
 const root = process.cwd();
 const publicDataDir = path.join(root, 'public', 'data');
-const cacheDir = path.join(root, 'data-cache');
-const employerWorkbookPath = path.join(root, 'H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx');
-const filingCsvPath = path.join(root, 'H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv');
-const officialDisclosurePath = path.join(root, 'LCA_Dislclosure_Data_FY2026_Q2.xlsx');
+const sourceDir = path.join(root, 'data', 'source');
+const cacheDir = path.join(root, 'data', 'cache');
+const employerWorkbookPath = path.join(sourceDir, 'H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx');
+const filingCsvPath = path.join(sourceDir, 'H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv');
+const officialDisclosurePath = path.join(sourceDir, 'LCA_Disclosure_Data_FY2026_Q2.xlsx');
+const virtualEnvPython = process.platform === 'win32'
+  ? path.join(root, '.venv', 'Scripts', 'python.exe')
+  : path.join(root, '.venv', 'bin', 'python');
 
 const generatedFiles = new Set([
   'employers.json',
@@ -73,12 +77,12 @@ async function loadVisaClasses(caseNumbers: string[]): Promise<Record<string, st
   if (!existsSync(officialDisclosurePath)) {
     throw new Error(
       'The official DOL disclosure workbook is required because the filtered filing source omits Visa Class. ' +
-      'Download LCA_Dislclosure_Data_FY2026_Q2.xlsx before running build-data.',
+      'Place LCA_Disclosure_Data_FY2026_Q2.xlsx in data/source before running build-data.',
     );
   }
 
   const extraction = spawnSync(
-    'python3',
+    existsSync(virtualEnvPython) ? virtualEnvPython : 'python3',
     [path.join(root, 'scripts', 'extract-visa-class.py'), officialDisclosurePath],
     {
       cwd: root,
@@ -136,7 +140,7 @@ async function main(): Promise<void> {
   await fs.mkdir(publicDataDir, { recursive: true });
   await fs.mkdir(cacheDir, { recursive: true });
   if (!existsSync(employerWorkbookPath) || !existsSync(filingCsvPath)) {
-    throw new Error('Required employer XLSX and filtered filing CSV sources were not found in the project root.');
+    throw new Error('Required employer XLSX and filtered filing CSV sources were not found in data/source.');
   }
 
   const employerRows = sheetRows(employerWorkbookPath, 'Employers');

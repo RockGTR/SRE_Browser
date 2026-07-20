@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+.venv/
+__pycache__/
+*.py[cod]
 *.npm
 yarn.lock
 # Keep package-lock.json for reproducible local installs.
@@ -29,11 +32,8 @@ logs/
 /output/
 
 # Local source datasets and generated caches
-/data-cache/
-/H-1B SRE and DevOps Employers — FY2026 Q2 - All Employers.csv
-/H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx
-/H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv
-/LCA_Dislclosure_Data_FY2026_Q2.xlsx
+/data/source/
+/data/cache/
 
 # OS
 Thumbs.db

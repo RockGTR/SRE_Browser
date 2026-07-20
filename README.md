@@ -33,12 +33,43 @@ The application includes:
 
 The application deliberately does **not** scan or monitor live job openings. It has no ATS adapters, opening refreshes, collection failures, retry commands, opening history, source snapshots, or closure inference.
 
-## Run locally
+## Run with Docker
 
-Use Node.js 20 or newer, npm, and Python 3 with `openpyxl` when regenerating data.
+Docker Compose is the smallest supported runtime path. It builds the React application in a temporary Node stage, then runs only the static output in a single-worker Nginx container:
 
 ```bash
-npm install
+docker compose up --build -d --wait
+```
+
+Open [http://127.0.0.1:8080](http://127.0.0.1:8080). Stop and remove the container with:
+
+```bash
+docker compose down
+```
+
+Set a different host port without editing the Compose file:
+
+```bash
+SRE_BROWSER_PORT=8090 docker compose up --build -d --wait
+```
+
+The default local profile is intentionally small and locked down:
+
+- 32 MiB memory with swap disabled;
+- 0.10 CPU and 16 process IDs;
+- one Nginx worker with 128 connections;
+- non-root execution, a read-only root filesystem, and all Linux capabilities dropped;
+- an 8 MiB temporary filesystem for the few writable Nginx paths; and
+- loopback-only exposure, so the dashboard is not published to the local network.
+
+Filtering, charts, and maps execute in the browser rather than the container. The runtime has no Node.js, Python, database, volume, environment-variable, source-workbook, or Visa-cache requirement. The five checked-in files under `public/data/` are baked into the image; rebuild the image after regenerating them. The app expects to be served at the URL root rather than under a reverse-proxy subpath.
+
+## Run locally
+
+The application itself requires Node.js 20 or newer and npm. `package.json` and `package-lock.json` are its dependency manifests; Python is not part of the normal application runtime.
+
+```bash
+npm ci
 npm run dev
 ```
 
@@ -47,6 +78,16 @@ The checked-in static JSON is sufficient to run and build the site:
 ```bash
 npm run build
 ```
+
+Python is used only by the optional data-regeneration pipeline. Create its isolated environment once and install the pinned helper dependency:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+The `.venv/` directory is local and ignored by Git. `npm run build-data` automatically uses its Python executable when present, even if the environment is not activated.
 
 ## Routes
 
@@ -68,9 +109,14 @@ Filters are stored in URL query parameters. Charts and maps have table alternati
 - `src/features/data-quality/` — reconciliation and provenance view.
 - `src/components/` — shared presentation and table components.
 - `src/data/`, `src/hooks/`, `src/types/`, and `src/utils/` — shared data loading, URL state, contracts, and formatting/export helpers.
+- `Dockerfile`, `compose.yaml`, and `docker/` — minimal production image, resource limits, SPA routing, caching, and security headers.
 - `scripts/` — the maintained data build, normalization, registry, extraction, and validation pipeline.
+- `data/source/` — ignored local source spreadsheets and CSV files used only for regeneration.
+- `data/cache/` — ignored extraction cache regenerated from the source workbooks.
 - `data/registry/` — canonical employer identity and careers-page verification records.
 - `public/data/` — the five generated browser datasets.
+
+The remaining root files are conventional Vite, TypeScript, npm, and Docker entrypoints. `node_modules/` and `dist/` are generated locally and ignored by Git; they do not ship as source files or enter the final Docker runtime image.
 
 ## Canonical and generated data
 
@@ -93,9 +139,11 @@ npm run validate-data
 
 The build reads:
 
-- `H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx`
-- `H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv`
-- `LCA_Dislclosure_Data_FY2026_Q2.xlsx`
+- `data/source/H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx`
+- `data/source/H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv`
+- `data/source/LCA_Disclosure_Data_FY2026_Q2.xlsx`
+
+The Python helper writes its reusable Visa Class lookup to `data/cache/`. Neither the 131 MB DOL workbook nor any other source dataset is copied into the application build or Docker image.
 
 ## Careers-page verification
 
@@ -127,6 +175,8 @@ Only records joined to Visa Class `H-1B` are included; E-3 rows from the broader
 npm run validate-data
 npm test
 npm run build
+docker compose config --quiet
+docker compose build
 ```
 
 Validation checks employer parity, Visa Class exclusion, national and role totals, filing-worksite and state counts, URL safety, verification evidence, careers-page coverage, route rendering, filters, and external-link safety.
