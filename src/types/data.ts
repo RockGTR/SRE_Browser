@@ -32,6 +32,22 @@ export interface EmployerRegistryRecord {
   };
 }
 
+export interface FilingRecord {
+  employerId: string;
+  employerName: string;
+  jobTitle: string;
+  roleCategory: FilingRole;
+  worksiteCity: string;
+  worksiteState: string;
+  salaryFloor: number | null;
+  salaryCeiling: number | null;
+  wageUnit: string;
+  caseStatus: string;
+  caseNumber: string;
+  socCode: string;
+  visaClass: 'H-1B';
+}
+
 export interface EmployerRecord {
   employerId: string;
   employerName: string;
@@ -42,12 +58,20 @@ export interface EmployerRecord {
   evidenceUrls: string[];
   verifiedAt: string | null;
   verificationNotes: string;
+  /** Distinct H-1B case count for this employer. */
   totalFilings: number;
   roleCounts: Record<FilingRole, number>;
   salaryFloor: number | null;
   salaryCeiling: number | null;
   filingStates: string[];
   filingTitles: string[];
+}
+
+export interface StateSummary {
+  state: string;
+  /** Distinct H-1B cases with at least one worksite in this state. */
+  filingCount: number;
+  roleCounts: Record<FilingRole, number>;
 }
 
 export interface ReconciliationCheck {
@@ -66,6 +90,9 @@ export interface DataQuality {
   officialWebsiteOnly: number;
   needsResearch: number;
   careersCoveragePercent: number;
+  filingWorksiteRowCount: number;
+  nationalDistinctCaseCount: number;
+  stateCount: number;
   reconciliation: ReconciliationCheck[];
 }
 
@@ -75,5 +102,8 @@ export interface Metadata {
   filingPeriod: string;
   generatedAt: string;
   nationalDistinctCaseCount: number;
+  filingWorksiteRowCount: number;
+  stateTotalsAreNonAdditive: boolean;
+  visaClassMethod: string;
   sourceFiles: string[];
 }

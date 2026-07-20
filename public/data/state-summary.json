@@ -1,0 +1,344 @@
+[
+  {
+    "state": "AR",
+    "filingCount": 4,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 4,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "AZ",
+    "filingCount": 22,
+    "roleCounts": {
+      "SRE / Site Reliability": 2,
+      "DevOps": 18,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "CA",
+    "filingCount": 158,
+    "roleCounts": {
+      "SRE / Site Reliability": 83,
+      "DevOps": 67,
+      "Platform / Infrastructure": 8
+    }
+  },
+  {
+    "state": "CO",
+    "filingCount": 18,
+    "roleCounts": {
+      "SRE / Site Reliability": 6,
+      "DevOps": 12,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "CT",
+    "filingCount": 8,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 7,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "DC",
+    "filingCount": 4,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 3,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "DE",
+    "filingCount": 6,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 4,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "FL",
+    "filingCount": 36,
+    "roleCounts": {
+      "SRE / Site Reliability": 8,
+      "DevOps": 27,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "GA",
+    "filingCount": 47,
+    "roleCounts": {
+      "SRE / Site Reliability": 14,
+      "DevOps": 32,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "HI",
+    "filingCount": 0,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "IA",
+    "filingCount": 1,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 1,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "ID",
+    "filingCount": 1,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "IL",
+    "filingCount": 42,
+    "roleCounts": {
+      "SRE / Site Reliability": 8,
+      "DevOps": 32,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "IN",
+    "filingCount": 4,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 3,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "KS",
+    "filingCount": 2,
+    "roleCounts": {
+      "SRE / Site Reliability": 2,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "MA",
+    "filingCount": 11,
+    "roleCounts": {
+      "SRE / Site Reliability": 5,
+      "DevOps": 6,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "MD",
+    "filingCount": 28,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 25,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "MI",
+    "filingCount": 13,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 12,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "MN",
+    "filingCount": 6,
+    "roleCounts": {
+      "SRE / Site Reliability": 2,
+      "DevOps": 4,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "MO",
+    "filingCount": 11,
+    "roleCounts": {
+      "SRE / Site Reliability": 6,
+      "DevOps": 3,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "NC",
+    "filingCount": 39,
+    "roleCounts": {
+      "SRE / Site Reliability": 3,
+      "DevOps": 35,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "NE",
+    "filingCount": 3,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 2,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "NH",
+    "filingCount": 2,
+    "roleCounts": {
+      "SRE / Site Reliability": 2,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "NJ",
+    "filingCount": 54,
+    "roleCounts": {
+      "SRE / Site Reliability": 11,
+      "DevOps": 40,
+      "Platform / Infrastructure": 3
+    }
+  },
+  {
+    "state": "NY",
+    "filingCount": 36,
+    "roleCounts": {
+      "SRE / Site Reliability": 16,
+      "DevOps": 18,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "OH",
+    "filingCount": 10,
+    "roleCounts": {
+      "SRE / Site Reliability": 2,
+      "DevOps": 8,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "OK",
+    "filingCount": 5,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 5,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "PA",
+    "filingCount": 20,
+    "roleCounts": {
+      "SRE / Site Reliability": 5,
+      "DevOps": 13,
+      "Platform / Infrastructure": 2
+    }
+  },
+  {
+    "state": "RI",
+    "filingCount": 1,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "SC",
+    "filingCount": 3,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 3,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "SD",
+    "filingCount": 1,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "TN",
+    "filingCount": 7,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 5,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "TX",
+    "filingCount": 252,
+    "roleCounts": {
+      "SRE / Site Reliability": 51,
+      "DevOps": 194,
+      "Platform / Infrastructure": 7
+    }
+  },
+  {
+    "state": "UT",
+    "filingCount": 2,
+    "roleCounts": {
+      "SRE / Site Reliability": 1,
+      "DevOps": 1,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "Unknown",
+    "filingCount": 0,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 0,
+      "Platform / Infrastructure": 0
+    }
+  },
+  {
+    "state": "VA",
+    "filingCount": 61,
+    "roleCounts": {
+      "SRE / Site Reliability": 8,
+      "DevOps": 52,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "WA",
+    "filingCount": 57,
+    "roleCounts": {
+      "SRE / Site Reliability": 31,
+      "DevOps": 25,
+      "Platform / Infrastructure": 1
+    }
+  },
+  {
+    "state": "WI",
+    "filingCount": 1,
+    "roleCounts": {
+      "SRE / Site Reliability": 0,
+      "DevOps": 1,
+      "Platform / Infrastructure": 0
+    }
+  }
+]

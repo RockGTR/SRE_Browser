@@ -1,12 +1,10 @@
 export function StatusBadge({ value }: { value: string }) {
-  const tone = /careers page verified|passed|all checks passed/i.test(value)
+  const tone = /careers page verified|all checks passed|passed/i.test(value)
     ? 'positive'
-    : /failed|error/i.test(value)
+    : /failed|error|missing/i.test(value)
       ? 'negative'
-      : /official website only/i.test(value)
+      : /official website only|needs research|review required|not verified/i.test(value)
         ? 'caution'
-        : /needs research|review required/i.test(value)
-          ? 'info'
-          : 'neutral';
+        : 'neutral';
   return <span className={`status-badge ${tone}`}>{value}</span>;
 }

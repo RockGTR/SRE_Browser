@@ -1,12 +1,16 @@
 {
-  "title": "H-1B SRE Careers Directory",
-  "description": "Verified official careers pages for employers with FY2026 Q2 SRE, DevOps, and platform H-1B filings.",
+  "title": "H-1B SRE Browser",
+  "description": "FY2026 Q2 H-1B SRE, DevOps, and platform filing data with verified official company careers pages.",
   "filingPeriod": "FY2026 Q2 cumulative — determinations from 2025-10-01 through 2026-03-31",
-  "generatedAt": "2026-07-20T04:16:32.361Z",
+  "generatedAt": "2026-07-20T05:26:07.665Z",
   "nationalDistinctCaseCount": 856,
+  "filingWorksiteRowCount": 1221,
+  "stateTotalsAreNonAdditive": true,
+  "visaClassMethod": "Official DOL disclosure workbook joined on Case Number",
   "sourceFiles": [
     "H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx",
     "H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv",
-    "LCA_Dislclosure_Data_FY2026_Q2.xlsx"
+    "LCA_Dislclosure_Data_FY2026_Q2.xlsx",
+    "data/registry/employers.json"
   ]
 }

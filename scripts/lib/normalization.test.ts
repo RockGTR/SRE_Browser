@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { classifyFilingRole, normalizeEmployerName, slugify } from './normalization';
 
-describe('employer and filing normalization', () => {
+describe('filing normalization and classification', () => {
   it('normalizes employer punctuation consistently', () => {
     expect(normalizeEmployerName('Oracle America, Inc.')).toBe('oracleamericainc');
-    expect(slugify('Oracle America, Inc.')).toMatch(/^oracle-america-inc-/);
+    expect(slugify('Oracle America, Inc.')).toBe(slugify('Oracle America Inc'));
   });
 
   it('reproduces the filing role precedence', () => {

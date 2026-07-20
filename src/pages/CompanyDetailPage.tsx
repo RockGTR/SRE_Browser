@@ -1,102 +1,163 @@
+import { createColumnHelper } from '@tanstack/react-table';
 import { Link, useParams } from 'react-router-dom';
+import { BarChart } from '../components/BarChart';
+import { DataTable } from '../components/DataTable';
 import { EmptyState } from '../components/EmptyState';
 import { KpiCard } from '../components/KpiCard';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
-import { useDirectoryData } from '../data/DirectoryData';
-import type { FilingRole } from '../types/data';
-import { careersSearchUrl } from '../utils/careers';
+import { useDashboardData } from '../data/DashboardData';
+import type { FilingRecord } from '../types/data';
 import { externalLinkProps, formatCurrency, formatDate } from '../utils/format';
 
-const roles: Array<{ key: FilingRole; label: string }> = [
-  { key: 'SRE / Site Reliability', label: 'SRE / Site Reliability' },
-  { key: 'DevOps', label: 'DevOps' },
-  { key: 'Platform / Infrastructure', label: 'Platform / Infrastructure' },
-];
+interface FilingTitleRow {
+  title: string;
+  caseCount: number;
+  roles: string;
+}
+
+const filingColumn = createColumnHelper<FilingRecord>();
+const titleColumn = createColumnHelper<FilingTitleRow>();
+
+function careersSearchUrl(employerName: string): string {
+  return `https://www.google.com/search?q=${encodeURIComponent(`${employerName} careers jobs`)}`;
+}
 
 function evidenceLabel(url: string): string {
-  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return 'Evidence link'; }
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return 'Verification evidence';
+  }
 }
 
 export function CompanyDetailPage() {
   const { employerId } = useParams();
-  const { data } = useDirectoryData();
+  const { data } = useDashboardData();
   if (!data) return null;
+
   const employer = data.employers.find((item) => item.employerId === employerId);
   if (!employer) {
-    return <div className="page"><EmptyState title="Employer not found" message="This employer is not present in the FY2026 Q2 directory." /></div>;
+    return <main className="page"><EmptyState title="Employer not found" message="The requested employer is not present in the FY2026 Q2 H-1B dataset." /></main>;
   }
 
-  const hasCareersPage = employer.careersPage !== 'NA';
+  const filings = data.filings.filter((filing) => filing.employerId === employer.employerId);
+  const hasCareersPage = employer.careersStatus === 'Careers page verified';
   const hasOfficialWebsite = employer.officialWebsite !== 'NA';
+
+  const casesByState = new Map<string, Set<string>>();
+  const titleStats = new Map<string, { cases: Set<string>; roles: Set<string> }>();
+  for (const filing of filings) {
+    if (!casesByState.has(filing.worksiteState)) casesByState.set(filing.worksiteState, new Set());
+    casesByState.get(filing.worksiteState)!.add(filing.caseNumber);
+
+    if (!titleStats.has(filing.jobTitle)) titleStats.set(filing.jobTitle, { cases: new Set(), roles: new Set() });
+    titleStats.get(filing.jobTitle)!.cases.add(filing.caseNumber);
+    titleStats.get(filing.jobTitle)!.roles.add(filing.roleCategory);
+  }
+
+  const stateCounts = [...casesByState.entries()]
+    .map(([label, caseNumbers]) => ({ label, value: caseNumbers.size }))
+    .sort((left, right) => right.value - left.value || left.label.localeCompare(right.label));
+  const filingTitles: FilingTitleRow[] = employer.filingTitles.map((title) => {
+    const stats = titleStats.get(title);
+    return {
+      title,
+      caseCount: stats?.cases.size ?? 0,
+      roles: [...(stats?.roles ?? [])].sort().join(', '),
+    };
+  });
+
+  const filingColumns = [
+    filingColumn.accessor('jobTitle', { header: 'Historical filing title' }),
+    filingColumn.accessor('roleCategory', { header: 'Role' }),
+    filingColumn.accessor('worksiteCity', { header: 'City' }),
+    filingColumn.accessor('worksiteState', { header: 'State' }),
+    filingColumn.accessor('salaryFloor', { header: 'Annualized floor', cell: (info) => formatCurrency(info.getValue()) }),
+    filingColumn.accessor('salaryCeiling', { header: 'Annualized ceiling', cell: (info) => formatCurrency(info.getValue()) }),
+    filingColumn.accessor('caseStatus', { header: 'Case status' }),
+    filingColumn.accessor('caseNumber', { header: 'Case number' }),
+  ];
+  const titleColumns = [
+    titleColumn.accessor('title', { header: 'Historical filing title' }),
+    titleColumn.accessor('caseCount', { header: 'Distinct H-1B cases' }),
+    titleColumn.accessor('roles', { header: 'Role classification' }),
+  ];
+
   return (
-    <div className="page company-page">
-      <Link to="/" className="back-link">← Careers directory</Link>
+    <main className="page">
+      <Link to="/companies" className="back-link">← Company browser</Link>
       <PageHeader
         eyebrow="Company overview"
         title={employer.employerName}
-        description="Verified careers-page information with supporting H-1B filing titles and role evidence."
+        description="Official careers-page verification alongside the employer’s complete H-1B SRE, DevOps, and platform filing context."
         actions={<StatusBadge value={employer.careersStatus} />}
       />
 
-      <section className="company-action-card">
-        <div>
-          <span className="eyebrow">Primary destination</span>
-          <h2>{hasCareersPage ? 'Official careers page' : 'Careers page still needs research'}</h2>
-          <p>{hasCareersPage
-            ? 'This link is backed by recorded first-party ownership evidence.'
-            : 'No careers URL has been verified yet, so the directory does not guess one.'}</p>
+      <section className="panel" aria-labelledby="careers-destination-heading">
+        <div className="panel-heading">
+          <div><span className="eyebrow">Official destination</span><h2 id="careers-destination-heading">{hasCareersPage ? 'Verified careers page' : 'Careers page needs research'}</h2></div>
+          <StatusBadge value={employer.careersStatus} />
         </div>
-        <div className="company-actions">
-          {hasCareersPage && <a className="primary-button link-button" href={employer.careersPage} {...externalLinkProps()}>Open careers page ↗</a>}
-          {!hasCareersPage && hasOfficialWebsite && <a className="primary-button link-button" href={employer.officialWebsite} {...externalLinkProps()}>Visit official website ↗</a>}
-          {!hasCareersPage && <a className="secondary-button link-button" href={careersSearchUrl(employer.employerName)} {...externalLinkProps()}>Search careers on the web ↗</a>}
+        <p className="panel-intro">{hasCareersPage
+          ? 'This first-party careers destination is backed by the verification record below.'
+          : 'No careers URL is presented as official until it has supporting first-party evidence.'}</p>
+        <div className="action-row">
+          {hasCareersPage && <a className="primary-button" href={employer.careersPage} {...externalLinkProps()}>Open official careers page ↗</a>}
+          {!hasCareersPage && hasOfficialWebsite && <a className="primary-button" href={employer.officialWebsite} {...externalLinkProps()}>Visit official website ↗</a>}
+          {!hasCareersPage && <a className="secondary-button" href={careersSearchUrl(employer.employerName)} {...externalLinkProps()}>Research careers page on Google ↗</a>}
         </div>
       </section>
 
-      <section className="kpi-grid compact" aria-label="Employer filing summary">
+      <section className="kpi-grid compact" aria-label="Employer H-1B filing summary">
         <KpiCard label="Distinct H-1B cases" value={employer.totalFilings} note="FY2026 Q2 cumulative" icon="01" />
-        <KpiCard label="SRE cases" value={employer.roleCounts['SRE / Site Reliability']} icon="02" />
-        <KpiCard label="DevOps cases" value={employer.roleCounts.DevOps} icon="03" />
-        <KpiCard label="Platform cases" value={employer.roleCounts['Platform / Infrastructure']} icon="04" />
+        <KpiCard label="Historical filing titles" value={employer.filingTitles.length} note="Unique titles, not live openings" icon="02" />
+        <KpiCard label="Filing states" value={employer.filingStates.length} note="A case may appear in multiple states" icon="03" />
+        <KpiCard label="Annualized salary range" value={`${formatCurrency(employer.salaryFloor)}–${formatCurrency(employer.salaryCeiling)}`} icon="04" />
       </section>
 
-      <div className="detail-grid">
-        <section className="panel verification-card">
-          <div className="panel-heading"><div><span className="eyebrow">Link record</span><h2>Careers-page verification</h2></div><StatusBadge value={employer.careersStatus} /></div>
-          <dl className="fact-list">
-            <div><dt>Careers page</dt><dd>{hasCareersPage ? <a href={employer.careersPage} {...externalLinkProps()}>{employer.careersPage}</a> : 'Not verified'}</dd></div>
-            <div><dt>Official website</dt><dd>{hasOfficialWebsite ? <a href={employer.officialWebsite} {...externalLinkProps()}>{employer.officialWebsite}</a> : 'Not verified'}</dd></div>
-            <div><dt>Verified on</dt><dd>{formatDate(employer.verifiedAt)}</dd></div>
-          </dl>
-          <div className="verification-notes">
-            <strong>Verification notes</strong>
-            <p>{employer.verificationNotes || 'No independent ownership evidence has been recorded yet.'}</p>
+      <section className="panel" aria-labelledby="verification-heading">
+        <div className="panel-heading"><div><span className="eyebrow">Link record</span><h2 id="verification-heading">Careers-page verification</h2></div></div>
+        <div className="link-row">
+          <span>Careers page: {hasCareersPage ? <a href={employer.careersPage} {...externalLinkProps()}>{employer.careersPage} ↗</a> : 'Not verified'}</span>
+          <span>Official website: {hasOfficialWebsite ? <a href={employer.officialWebsite} {...externalLinkProps()}>{employer.officialWebsite} ↗</a> : 'Not verified'}</span>
+          <span>Verified on: {formatDate(employer.verifiedAt)}</span>
+          <span>Verification source: {employer.verificationSource || 'Not recorded'}</span>
+        </div>
+        <p><strong>Verification notes:</strong> {employer.verificationNotes || 'No independent ownership evidence has been recorded yet.'}</p>
+        {employer.evidenceUrls.length > 0 && (
+          <div className="prose-panel">
+            <strong>Verification evidence</strong>
+            <ul>{employer.evidenceUrls.map((url, index) => <li key={`${url}-${index}`}><a href={url} {...externalLinkProps()}>{evidenceLabel(url)} ↗</a></li>)}</ul>
           </div>
-          {employer.evidenceUrls.length > 0 && <div className="evidence-links"><strong>Evidence</strong><ul>{employer.evidenceUrls.map((url) => <li key={url}><a href={url} {...externalLinkProps()}>{evidenceLabel(url)} ↗</a></li>)}</ul></div>}
-        </section>
+        )}
+      </section>
 
-        <section className="panel filing-overview">
-          <div className="panel-heading"><div><span className="eyebrow">Filing context</span><h2>Role and location overview</h2></div></div>
-          <div className="role-bars">
-            {roles.map(({ key, label }) => {
-              const count = employer.roleCounts[key];
-              const width = employer.totalFilings ? Math.max(count ? 5 : 0, (count / employer.totalFilings) * 100) : 0;
-              return <div className="role-bar" key={key}><div><span>{label}</span><strong>{count}</strong></div><span className="bar-track"><span style={{ width: `${width}%` }} /></span></div>;
-            })}
-          </div>
-          <dl className="fact-list compact-facts">
-            <div><dt>Annualized salary range</dt><dd>{formatCurrency(employer.salaryFloor)} – {formatCurrency(employer.salaryCeiling)}</dd></div>
-            <div><dt>Filing states</dt><dd>{employer.filingStates.join(', ')}</dd></div>
-          </dl>
+      <div className="dashboard-grid">
+        <section className="panel">
+          <div className="panel-heading"><div><span className="eyebrow">Distinct cases</span><h2>Role mix</h2></div></div>
+          <BarChart title="Distinct H-1B cases" horizontal={false} data={[
+            { label: 'SRE', value: employer.roleCounts['SRE / Site Reliability'] },
+            { label: 'DevOps', value: employer.roleCounts.DevOps },
+            { label: 'Platform', value: employer.roleCounts['Platform / Infrastructure'] },
+          ]} />
+        </section>
+        <section className="panel">
+          <div className="panel-heading"><div><span className="eyebrow">Case-state pairs</span><h2>Filing locations</h2></div></div>
+          {stateCounts.length ? <BarChart title="Distinct H-1B cases by state" data={stateCounts.slice(0, 10)} /> : <EmptyState title="No filing locations" message="No worksite-state rows are available for this employer." />}
         </section>
       </div>
 
-      <section className="panel title-panel">
-        <div className="panel-heading"><div><span className="eyebrow">Job-title evidence</span><h2>Titles found in H-1B filings</h2></div><span className="count-pill">{employer.filingTitles.length} unique</span></div>
-        <p className="panel-intro">These are filing titles from the FY2026 Q2 dataset. They provide employer context and are not live job openings.</p>
-        <ul className="title-grid">{employer.filingTitles.map((title) => <li key={title}>{title}</li>)}</ul>
+      <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">Historical job-title evidence</span><h2>Titles found in H-1B filings</h2></div><span className="muted">{filingTitles.length} unique</span></div>
+        <p className="panel-intro">These are historical titles from FY2026 Q2 H-1B filings. They describe sponsorship activity and are not live job openings.</p>
+        <DataTable data={filingTitles} columns={titleColumns} emptyMessage="No filing titles are recorded for this employer." getRowId={(row) => row.title} />
       </section>
-    </div>
+
+      <section className="panel">
+        <div className="panel-heading"><div><span className="eyebrow">Underlying filing rows</span><h2>H-1B filing detail</h2></div><span className="muted">{filings.length} case-worksite rows</span></div>
+        <DataTable data={filings} columns={filingColumns} pageSize={15} emptyMessage="No H-1B filing rows are recorded for this employer." />
+      </section>
+    </main>
   );
 }

@@ -26,7 +26,6 @@ out/
 *.log
 logs/
 .playwright-cli/
-output/playwright/
 /output/
 
 # Local source datasets and generated caches

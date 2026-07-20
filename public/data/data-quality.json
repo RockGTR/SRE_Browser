@@ -1,46 +1,63 @@
 {
-  "generatedAt": "2026-07-20T04:16:32.361Z",
+  "generatedAt": "2026-07-20T05:26:07.665Z",
   "totalEmployers": 515,
   "verifiedOfficialWebsites": 141,
   "verifiedCareersPages": 138,
   "officialWebsiteOnly": 3,
   "needsResearch": 374,
   "careersCoveragePercent": 26.8,
+  "filingWorksiteRowCount": 1221,
+  "nationalDistinctCaseCount": 856,
+  "stateCount": 38,
   "reconciliation": [
     {
       "name": "Employers",
       "expected": 515,
       "actual": 515,
       "passed": true,
-      "note": "Legal employers from the FY2026 Q2 employer workbook."
+      "note": "Legal employers come from the FY2026 Q2 Employers worksheet."
+    },
+    {
+      "name": "Filing/worksite rows",
+      "expected": 1221,
+      "actual": 1221,
+      "passed": true,
+      "note": "H-1B case/worksite rows retained for browsing and state views."
     },
     {
       "name": "Distinct H-1B cases",
       "expected": 856,
       "actual": 856,
       "passed": true,
-      "note": "Distinct case numbers after joining the official Visa Class field."
+      "note": "National totals use distinct Case Number after the official Visa Class join."
+    },
+    {
+      "name": "State summaries",
+      "expected": 38,
+      "actual": 38,
+      "passed": true,
+      "note": "The index contains 36 observed locations plus zero-row HI and Unknown entries; every metric is filing-derived."
     },
     {
       "name": "SRE / Site Reliability cases",
       "expected": 258,
       "actual": 258,
       "passed": true,
-      "note": "Distinct H-1B case numbers."
+      "note": "Role totals use distinct Case Number."
     },
     {
       "name": "DevOps cases",
       "expected": 565,
       "actual": 565,
       "passed": true,
-      "note": "Distinct H-1B case numbers."
+      "note": "Role totals use distinct Case Number."
     },
     {
       "name": "Platform / Infrastructure cases",
       "expected": 33,
       "actual": 33,
       "passed": true,
-      "note": "Distinct H-1B case numbers."
+      "note": "Role totals use distinct Case Number."
     }
   ]
 }
