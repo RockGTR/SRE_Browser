@@ -2,7 +2,7 @@
 node_modules/
 *.npm
 yarn.lock
-package-lock.json
+# Keep package-lock.json for reproducible local installs.
 
 # Environment
 .env
@@ -25,7 +25,16 @@ out/
 # Logs
 *.log
 logs/
+.playwright-cli/
+output/playwright/
+/output/
+
+# Local source datasets and generated caches
+/data-cache/
+/H-1B SRE and DevOps Employers — FY2026 Q2 - All Employers.csv
+/H1B_SRE_DevOps_Employers_FY2026_Q2.xlsx
+/H1B_SRE_DevOps_Filtered_Filings_FY2026_Q2.csv
+/LCA_Dislclosure_Data_FY2026_Q2.xlsx
 
 # OS
-.DS_Store
 Thumbs.db

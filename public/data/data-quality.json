@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-07-20T04:16:32.361Z",
+  "totalEmployers": 515,
+  "verifiedOfficialWebsites": 141,
+  "verifiedCareersPages": 138,
+  "officialWebsiteOnly": 3,
+  "needsResearch": 374,
+  "careersCoveragePercent": 26.8,
+  "reconciliation": [
+    {
+      "name": "Employers",
+      "expected": 515,
+      "actual": 515,
+      "passed": true,
+      "note": "Legal employers from the FY2026 Q2 employer workbook."
+    },
+    {
+      "name": "Distinct H-1B cases",
+      "expected": 856,
+      "actual": 856,
+      "passed": true,
+      "note": "Distinct case numbers after joining the official Visa Class field."
+    },
+    {
+      "name": "SRE / Site Reliability cases",
+      "expected": 258,
+      "actual": 258,
+      "passed": true,
+      "note": "Distinct H-1B case numbers."
+    },
+    {
+      "name": "DevOps cases",
+      "expected": 565,
+      "actual": 565,
+      "passed": true,
+      "note": "Distinct H-1B case numbers."
+    },
+    {
+      "name": "Platform / Infrastructure cases",
+      "expected": 33,
+      "actual": 33,
+      "passed": true,
+      "note": "Distinct H-1B case numbers."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "registryName": "H-1B SRE careers-page registry",
+  "canonicalFiles": [
+    "data/registry/employers.json"
+  ],
+  "generatedFiles": [
+    "public/data/employers.json",
+    "public/data/data-quality.json",
+    "public/data/metadata.json"
+  ]
+}
