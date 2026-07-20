@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { CSSProperties, ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
@@ -13,7 +14,7 @@ vi.mock('echarts-for-react', () => ({
 }));
 
 vi.mock('react-simple-maps', () => ({
-  ComposableMap: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  ComposableMap: ({ children }: { children: ReactNode }) => <svg>{children}</svg>,
   Geographies: ({ children }: { children: (value: { geographies: never[] }) => ReactNode }) => (
     <>{children({ geographies: [] })}</>
   ),
@@ -73,6 +74,45 @@ it('shows Equifax careers verification and historical filing titles', async () =
   expect(screen.getByRole('link', { name: 'Open official careers page ↗' })).toHaveAttribute('href', 'https://careers.equifax.com/');
   expect(screen.getByRole('heading', { name: 'Titles found in H-1B filings' })).toBeInTheDocument();
   expect(screen.getByText(/not live job openings/i)).toBeInTheDocument();
+});
+
+it('coordinates employer filing filters across the drilldown and worksite map', async () => {
+  const user = userEvent.setup();
+  render(<MemoryRouter initialEntries={['/filings/companies']}><App /></MemoryRouter>);
+
+  expect(await screen.findByRole('heading', { name: 'Filings by employer', level: 1 })).toBeInTheDocument();
+  const listingPanel = screen.getByRole('heading', { name: 'Filtered filing listings' }).closest('section');
+  expect(listingPanel).not.toBeNull();
+  const listingTable = within(listingPanel!);
+  for (const header of [
+    'Employer',
+    'Job title',
+    'Role category',
+    'Worksite city',
+    'State',
+    'Annualized salary floor',
+    'Annualized salary ceiling',
+    'Matching filings for company',
+  ]) {
+    expect(listingTable.getByRole('columnheader', { name: header })).toBeInTheDocument();
+  }
+  expect(listingTable.queryByRole('columnheader', { name: 'Case number' })).not.toBeInTheDocument();
+  expect(listingTable.queryByRole('columnheader', { name: 'Case status' })).not.toBeInTheDocument();
+  expect(screen.getByRole('status')).toHaveTextContent(
+    '1,120 unique listings · 856 distinct matching filings · 515 employers',
+  );
+
+  await user.selectOptions(screen.getByLabelText('Role category'), 'DevOps');
+  expect(screen.getByRole('status')).toHaveTextContent(
+    '754 unique listings · 565 distinct matching filings · 399 employers',
+  );
+
+  await user.selectOptions(screen.getByLabelText('Worksite state'), 'TX');
+  expect(screen.getByRole('status')).toHaveTextContent(
+    '230 unique listings · 194 distinct matching filings · 146 employers',
+  );
+  expect(screen.getByRole('group', { name: 'Filtered distinct H-1B filings by worksite state' }))
+    .toHaveTextContent('194 distinct filtered filings · 1 worksite states or areas represented');
 });
 
 it('does not expose removed scanner routes', async () => {

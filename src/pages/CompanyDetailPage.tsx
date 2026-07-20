@@ -3,20 +3,20 @@ import { Link, useParams } from 'react-router-dom';
 import { BarChart } from '../components/BarChart';
 import { DataTable } from '../components/DataTable';
 import { EmptyState } from '../components/EmptyState';
+import { FilingListingsTable } from '../components/FilingListingsTable';
 import { KpiCard } from '../components/KpiCard';
 import { PageHeader } from '../components/PageHeader';
 import { StatusBadge } from '../components/StatusBadge';
 import { useDashboardData } from '../data/DashboardData';
-import type { FilingRecord } from '../types/data';
 import { externalLinkProps, formatCurrency, formatDate } from '../utils/format';
+import { aggregateFilingListings } from '../utils/filings';
 
 interface FilingTitleRow {
   title: string;
-  caseCount: number;
+  filingCount: number;
   roles: string;
 }
 
-const filingColumn = createColumnHelper<FilingRecord>();
 const titleColumn = createColumnHelper<FilingTitleRow>();
 
 function careersSearchUrl(employerName: string): string {
@@ -42,6 +42,7 @@ export function CompanyDetailPage() {
   }
 
   const filings = data.filings.filter((filing) => filing.employerId === employer.employerId);
+  const filingListings = aggregateFilingListings(filings);
   const hasCareersPage = employer.careersStatus === 'Careers page verified';
   const hasOfficialWebsite = employer.officialWebsite !== 'NA';
 
@@ -63,24 +64,14 @@ export function CompanyDetailPage() {
     const stats = titleStats.get(title);
     return {
       title,
-      caseCount: stats?.cases.size ?? 0,
+      filingCount: stats?.cases.size ?? 0,
       roles: [...(stats?.roles ?? [])].sort().join(', '),
     };
   });
 
-  const filingColumns = [
-    filingColumn.accessor('jobTitle', { header: 'Historical filing title' }),
-    filingColumn.accessor('roleCategory', { header: 'Role' }),
-    filingColumn.accessor('worksiteCity', { header: 'City' }),
-    filingColumn.accessor('worksiteState', { header: 'State' }),
-    filingColumn.accessor('salaryFloor', { header: 'Annualized floor', cell: (info) => formatCurrency(info.getValue()) }),
-    filingColumn.accessor('salaryCeiling', { header: 'Annualized ceiling', cell: (info) => formatCurrency(info.getValue()) }),
-    filingColumn.accessor('caseStatus', { header: 'Case status' }),
-    filingColumn.accessor('caseNumber', { header: 'Case number' }),
-  ];
   const titleColumns = [
     titleColumn.accessor('title', { header: 'Historical filing title' }),
-    titleColumn.accessor('caseCount', { header: 'Distinct H-1B cases' }),
+    titleColumn.accessor('filingCount', { header: 'Filings with title' }),
     titleColumn.accessor('roles', { header: 'Role classification' }),
   ];
 
@@ -155,8 +146,9 @@ export function CompanyDetailPage() {
       </section>
 
       <section className="panel">
-        <div className="panel-heading"><div><span className="eyebrow">Underlying filing rows</span><h2>H-1B filing detail</h2></div><span className="muted">{filings.length} case-worksite rows</span></div>
-        <DataTable data={filings} columns={filingColumns} pageSize={15} emptyMessage="No H-1B filing rows are recorded for this employer." />
+        <div className="panel-heading"><div><span className="eyebrow">Deduplicated filing detail</span><h2>H-1B filing listings</h2></div><span className="muted">{filingListings.length} unique displayed combinations</span></div>
+        <p className="panel-intro">Multiple cases with the same employer, title, role, city, state, and salary values are shown once. The company filing count remains based on distinct filings.</p>
+        <FilingListingsTable rows={filingListings} pageSize={15} emptyMessage="No H-1B filing listings are recorded for this employer." />
       </section>
     </main>
   );

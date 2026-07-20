@@ -48,6 +48,24 @@ export interface FilingRecord {
   visaClass: 'H-1B';
 }
 
+/**
+ * A case-free filing row at the exact grain shown in dashboard drilldowns.
+ * Multiple cases with the same displayed dimensions collapse into one row.
+ */
+export interface FilingListingRecord {
+  listingId: string;
+  employerId: string;
+  employerName: string;
+  jobTitle: string;
+  roleCategory: FilingRole;
+  worksiteCity: string;
+  worksiteState: string;
+  salaryFloor: number | null;
+  salaryCeiling: number | null;
+  /** Distinct cases for this employer within the input/filter scope. */
+  companyFilingCount: number;
+}
+
 export interface EmployerRecord {
   employerId: string;
   employerName: string;

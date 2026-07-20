@@ -9,6 +9,7 @@ The dashboard keeps filing evidence and careers-page verification separate: fili
 - 515 distinct legal employers.
 - 856 distinct H-1B cases: 258 SRE / Site Reliability, 565 DevOps, and 33 Platform / Infrastructure.
 - 1,221 filing-worksite rows across 38 state-index rows: 36 observed locations plus zero-row HI and Unknown entries retained from the original browser.
+- 1,120 unique drilldown listings after collapsing case rows with identical employer, title, role, worksite, and salary fields.
 - 141 verified official company websites.
 - 138 verified official careers pages.
 - 3 employers with a verified company website but no verified careers page.
@@ -23,7 +24,7 @@ The application includes:
 - a summary dashboard with H-1B role, employer, and state patterns;
 - a searchable legal-employer directory;
 - detailed H-1B filing views by employer and worksite state;
-- interactive state maps and employer/state charts with accessible table alternatives;
+- interactive state maps, proportional worksite-state dots, and employer/state charts with accessible table alternatives;
 - company pages with case totals, role mix, filing titles, worksite states, salary context, and careers-page verification evidence;
 - direct links to verified official careers pages;
 - clearly labeled web-search research links for unresolved employers;
@@ -52,8 +53,8 @@ npm run build
 - `/` — summary of H-1B cases, role mix, top employers, top worksite states, and careers-page coverage.
 - `/companies` — searchable employer and careers-page directory.
 - `/companies/:employerId` — company filing overview, filing titles, locations, salary context, and careers link evidence.
-- `/filings/states` — interactive H-1B filing browser by worksite state.
-- `/filings/companies` — H-1B filing browser by legal employer.
+- `/filings/states` — filtered H-1B listing browser by worksite state.
+- `/filings/companies` — coordinated employer/title/role/city/state filters, employer charts, proportional worksite-state dots, and a deduplicated filing-listing table.
 - `/data-quality` — filing reconciliation, careers-page coverage, and source provenance.
 
 Filters are stored in URL query parameters. Charts and maps have table alternatives, and filtered tables can be exported to CSV.
@@ -102,6 +103,8 @@ Only records joined to Visa Class `H-1B` are included; E-3 rows from the broader
 - A multi-state case appears once in each applicable state.
 - National totals are never calculated by summing state totals.
 - Distinct legal employers are never merged merely because they share a brand.
+- Drilldown tables use one row per unique Employer + Job title + Role category + Worksite city + State + annualized salary floor + annualized salary ceiling combination. Case identifiers, statuses, and SOC codes are not displayed or exported from those drilldowns.
+- The “Matching filings for company” value is the distinct filing count for that employer inside the current coordinated filter scope.
 - Filing titles are categorized as SRE / Site Reliability, DevOps, or Platform / Infrastructure using the documented normalization rules.
 - Salary values are annualized USD amounts; the original wage unit remains in filing records for audit.
 

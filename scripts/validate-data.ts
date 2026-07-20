@@ -8,6 +8,7 @@ import type {
   Metadata,
   StateSummary,
 } from '../src/types/data';
+import { aggregateFilingListings } from '../src/utils/filings';
 import { NA } from './lib/normalization';
 import { loadEmployerRegistry } from './registry/io';
 
@@ -153,6 +154,15 @@ for (const employer of employers) {
 
 const uniqueCases = new Map(filings.map((filing) => [filing.caseNumber, filing]));
 assert(uniqueCases.size === 856, `Expected 856 distinct H-1B cases, found ${uniqueCases.size}.`);
+const filingListings = aggregateFilingListings(filings);
+assert(filingListings.length === 1120, `Expected 1120 unique filing listings, found ${filingListings.length}.`);
+assertUnique(filingListings.map((listing) => listing.listingId), 'filing listing ID');
+for (const listing of filingListings) {
+  assert(
+    listing.companyFilingCount === employersById.get(listing.employerId)?.totalFilings,
+    `Company filing count drifted for listing ${listing.listingId}.`,
+  );
+}
 const nationalRoleCounts = emptyRoleCounts();
 for (const filing of uniqueCases.values()) nationalRoleCounts[filing.roleCategory] += 1;
 assert(nationalRoleCounts['SRE / Site Reliability'] === 258,
@@ -208,6 +218,7 @@ assert(metadata.visaClassMethod.includes('Official DOL'), 'Metadata must documen
 
 console.log(
   `Data validation passed: ${employers.length} employers, ${uniqueCases.size} distinct H-1B cases, ` +
-  `${filings.length} case/worksite rows, ${stateSummary.length} filing-state summaries, and ` +
+  `${filings.length} case/worksite rows, ${filingListings.length} unique filing listings, ` +
+  `${stateSummary.length} filing-state summaries, and ` +
   `${verifiedCareersPages} verified careers pages.`,
 );
