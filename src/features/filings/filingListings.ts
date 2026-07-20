@@ -1,4 +1,4 @@
-import type { FilingListingRecord, FilingRecord } from '../types/data';
+import type { FilingListingRecord, FilingRecord } from '../../types/data';
 
 type ListingDimension = string | number | null;
 

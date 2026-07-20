@@ -1,6 +1,6 @@
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import usAtlas from 'us-atlas/states-10m.json';
-import { stateForFips } from '../utils/usStates';
+import { stateForFips } from './usStates';
 
 export function StateMap({ values, selected, onSelect, label }: { values: Record<string, number>; selected?: string; onSelect: (state: string) => void; label: string }) {
   const max = Math.max(1, ...Object.values(values));

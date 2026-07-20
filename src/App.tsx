@@ -2,13 +2,13 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LoadingState } from './components/LoadingState';
 import { DashboardDataProvider, useDashboardData } from './data/DashboardData';
-import { CompaniesPage } from './pages/CompaniesPage';
-import { CompanyDetailPage } from './pages/CompanyDetailPage';
-import { DataQualityPage } from './pages/DataQualityPage';
-import { FilingsCompaniesPage } from './pages/FilingsCompaniesPage';
-import { FilingsStatesPage } from './pages/FilingsStatesPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { OverviewPage } from './pages/OverviewPage';
+import { NotFoundPage } from './app/NotFoundPage';
+import { CompaniesPage } from './features/companies/CompaniesPage';
+import { CompanyDetailPage } from './features/companies/CompanyDetailPage';
+import { DataQualityPage } from './features/data-quality/DataQualityPage';
+import { FilingsCompaniesPage } from './features/filings/FilingsCompaniesPage';
+import { FilingsStatesPage } from './features/filings/FilingsStatesPage';
+import { OverviewPage } from './features/overview/OverviewPage';
 
 function RoutedApp() {
   const { loading, error } = useDashboardData();

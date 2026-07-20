@@ -1,8 +1,8 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
-import type { FilingListingRecord } from '../types/data';
-import { formatCurrency } from '../utils/format';
-import { DataTable } from './DataTable';
+import { DataTable } from '../../components/DataTable';
+import type { FilingListingRecord } from '../../types/data';
+import { formatCurrency } from '../../utils/format';
 
 const column = createColumnHelper<FilingListingRecord>();
 

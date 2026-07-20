@@ -1,54 +1,30 @@
-import { BarChart } from '../components/BarChart';
-import { EmptyState } from '../components/EmptyState';
+import { BarChart } from '../../components/BarChart';
+import { EmptyState } from '../../components/EmptyState';
 import {
   FilingListingsTable,
   filingListingCsvHeaders,
   filingListingCsvRows,
-} from '../components/FilingListingsTable';
-import { FilterBar, SearchField, SelectField } from '../components/Filters';
-import { PageHeader } from '../components/PageHeader';
-import { ProportionalStateDotMap } from '../components/ProportionalStateDotMap';
-import { useDashboardData } from '../data/DashboardData';
-import { useUrlFilters } from '../hooks/useUrlFilters';
-import type { FilingRole } from '../types/data';
-import { downloadCsv } from '../utils/csv';
+} from './FilingListingsTable';
+import { PageHeader } from '../../components/PageHeader';
+import { useDashboardData } from '../../data/DashboardData';
+import { downloadCsv } from '../../utils/csv';
+import { FilingFilterBar } from './FilingFilterBar';
+import { ProportionalStateDotMap } from './ProportionalStateDotMap';
+import { filterFilings } from './filingFilters';
 import {
   aggregateFilingListings,
   countDistinctCases,
   countDistinctCasesBy,
-} from '../utils/filings';
-
-const roles: FilingRole[] = ['SRE / Site Reliability', 'DevOps', 'Platform / Infrastructure'];
+} from './filingListings';
+import { useFilingFilters } from './useFilingFilters';
 
 export function FilingsCompaniesPage() {
   const { data } = useDashboardData();
-  const filters = useUrlFilters();
+  const filters = useFilingFilters();
   if (!data) return null;
 
-  const employerSearch = filters.get('employer');
-  const titleSearch = filters.get('title');
-  const citySearch = filters.get('city');
-  const role = filters.get('role');
-  const state = filters.get('state');
-  const minimumCompanyFilings = Number(filters.get('minFilings', '0')) || 0;
-
-  const normalizedEmployerSearch = employerSearch.trim().toLowerCase();
-  const normalizedTitleSearch = titleSearch.trim().toLowerCase();
-  const normalizedCitySearch = citySearch.trim().toLowerCase();
-  const dimensionFilteredFilings = data.filings.filter((filing) => (
-    (!normalizedEmployerSearch || filing.employerName.toLowerCase().includes(normalizedEmployerSearch))
-    && (!normalizedTitleSearch || filing.jobTitle.toLowerCase().includes(normalizedTitleSearch))
-    && (!normalizedCitySearch || filing.worksiteCity.toLowerCase().includes(normalizedCitySearch))
-    && (!role || filing.roleCategory === role)
-    && (!state || filing.worksiteState === state)
-  ));
-
-  const preThresholdCounts = countDistinctCasesBy(dimensionFilteredFilings, (filing) => filing.employerId);
-  const filteredFilings = minimumCompanyFilings > 0
-    ? dimensionFilteredFilings.filter((filing) => (
-      (preThresholdCounts.get(filing.employerId) ?? 0) >= minimumCompanyFilings
-    ))
-    : dimensionFilteredFilings;
+  const { employerSearch, state } = filters.values;
+  const filteredFilings = filterFilings(data.filings, filters.values);
 
   const listings = aggregateFilingListings(filteredFilings);
   const employerCounts = countDistinctCasesBy(filteredFilings, (filing) => filing.employerId);
@@ -100,55 +76,12 @@ export function FilingsCompaniesPage() {
         )}
       />
 
-      <FilterBar onReset={filters.reset}>
-        <SearchField
-          label="Employer"
-          value={employerSearch}
-          onChange={(value) => filters.set('employer', value)}
-          placeholder="Search legal employer"
-        />
-        <SearchField
-          label="Job title"
-          value={titleSearch}
-          onChange={(value) => filters.set('title', value)}
-          placeholder="Search filing title"
-        />
-        <SelectField
-          label="Role category"
-          value={role}
-          onChange={(value) => filters.set('role', value)}
-          options={[{ label: 'All roles', value: '' }, ...roles.map((value) => ({ label: value, value }))]}
-        />
-        <SearchField
-          label="Worksite city"
-          value={citySearch}
-          onChange={(value) => filters.set('city', value)}
-          placeholder="Search city"
-        />
-        <SelectField
-          label="Worksite state"
-          value={state}
-          onChange={(value) => filters.set('state', value)}
-          options={[
-            { label: 'All states', value: '' },
-            ...data.stateSummary
-              .filter((item) => item.filingCount > 0)
-              .map((item) => ({ label: item.state, value: item.state })),
-          ]}
-        />
-        <SelectField
-          label="Minimum matching filings"
-          value={minimumCompanyFilings ? String(minimumCompanyFilings) : ''}
-          onChange={(value) => filters.set('minFilings', value)}
-          options={[
-            { label: 'Any filing count', value: '' },
-            { label: '2 or more', value: '2' },
-            { label: '5 or more', value: '5' },
-            { label: '10 or more', value: '10' },
-            { label: '25 or more', value: '25' },
-          ]}
-        />
-      </FilterBar>
+      <FilingFilterBar
+        values={filters.values}
+        stateOptions={data.stateSummary.filter((item) => item.filingCount > 0).map((item) => item.state)}
+        onSet={filters.set}
+        onReset={filters.reset}
+      />
 
       <p className="result-summary" role="status" aria-live="polite">
         <strong>{listings.length.toLocaleString()}</strong> unique listings ·{' '}

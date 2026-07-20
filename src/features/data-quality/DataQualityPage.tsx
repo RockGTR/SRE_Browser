@@ -1,9 +1,9 @@
-import { DataTable } from '../components/DataTable';
-import { KpiCard } from '../components/KpiCard';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import { useDashboardData } from '../data/DashboardData';
-import { formatDate, formatNumber } from '../utils/format';
+import { DataTable } from '../../components/DataTable';
+import { KpiCard } from '../../components/KpiCard';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import { useDashboardData } from '../../data/DashboardData';
+import { formatDate, formatNumber } from '../../utils/format';
 
 export function DataQualityPage() {
   const { data } = useDashboardData();

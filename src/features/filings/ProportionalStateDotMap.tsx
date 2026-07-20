@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import usAtlas from 'us-atlas/states-10m.json';
-import { stateForFips } from '../utils/usStates';
+import { stateForFips } from './usStates';
 
 interface ProportionalStateDotMapProps {
   values: Record<string, number>;

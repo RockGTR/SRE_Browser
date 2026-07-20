@@ -1,15 +1,15 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Link, useParams } from 'react-router-dom';
-import { BarChart } from '../components/BarChart';
-import { DataTable } from '../components/DataTable';
-import { EmptyState } from '../components/EmptyState';
-import { FilingListingsTable } from '../components/FilingListingsTable';
-import { KpiCard } from '../components/KpiCard';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import { useDashboardData } from '../data/DashboardData';
-import { externalLinkProps, formatCurrency, formatDate } from '../utils/format';
-import { aggregateFilingListings } from '../utils/filings';
+import { BarChart } from '../../components/BarChart';
+import { DataTable } from '../../components/DataTable';
+import { EmptyState } from '../../components/EmptyState';
+import { KpiCard } from '../../components/KpiCard';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import { useDashboardData } from '../../data/DashboardData';
+import { externalLinkProps, formatCurrency, formatDate } from '../../utils/format';
+import { FilingListingsTable } from '../filings/FilingListingsTable';
+import { aggregateFilingListings } from '../filings/filingListings';
 
 interface FilingTitleRow {
   title: string;

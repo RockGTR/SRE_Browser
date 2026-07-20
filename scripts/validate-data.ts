@@ -8,7 +8,7 @@ import type {
   Metadata,
   StateSummary,
 } from '../src/types/data';
-import { aggregateFilingListings } from '../src/utils/filings';
+import { aggregateFilingListings } from '../src/features/filings/filingListings';
 import { NA } from './lib/normalization';
 import { loadEmployerRegistry } from './registry/io';
 

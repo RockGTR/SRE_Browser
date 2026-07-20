@@ -59,6 +59,19 @@ npm run build
 
 Filters are stored in URL query parameters. Charts and maps have table alternatives, and filtered tables can be exported to CSV.
 
+## Project structure
+
+- `src/app/` — application-level fallback views.
+- `src/features/overview/` — summary dashboard.
+- `src/features/companies/` — employer directory and company overview.
+- `src/features/filings/` — state/employer filing browsers, coordinated filters, listing aggregation, maps, and feature tests.
+- `src/features/data-quality/` — reconciliation and provenance view.
+- `src/components/` — shared presentation and table components.
+- `src/data/`, `src/hooks/`, `src/types/`, and `src/utils/` — shared data loading, URL state, contracts, and formatting/export helpers.
+- `scripts/` — the maintained data build, normalization, registry, extraction, and validation pipeline.
+- `data/registry/` — canonical employer identity and careers-page verification records.
+- `public/data/` — the five generated browser datasets.
+
 ## Canonical and generated data
 
 [`data/registry/employers.json`](data/registry/employers.json) is the sole editable source of truth for legal-employer identity, official websites, careers pages, and verification evidence. Unverified URLs remain `null`; domains are never inferred from employer names.

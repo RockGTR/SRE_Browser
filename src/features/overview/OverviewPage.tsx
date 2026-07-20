@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { BarChart } from '../components/BarChart';
-import { KpiCard } from '../components/KpiCard';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
-import { useDashboardData } from '../data/DashboardData';
-import { formatDate, formatNumber } from '../utils/format';
+import { BarChart } from '../../components/BarChart';
+import { KpiCard } from '../../components/KpiCard';
+import { PageHeader } from '../../components/PageHeader';
+import { StatusBadge } from '../../components/StatusBadge';
+import { useDashboardData } from '../../data/DashboardData';
+import { formatDate, formatNumber } from '../../utils/format';
 
 const filingRoles = [
   'SRE / Site Reliability',
@@ -118,7 +118,7 @@ export function OverviewPage() {
           <BarChart
             title="Distinct H-1B cases"
             data={topEmployers}
-            onSelect={(employer) => navigate(`/filings/companies?search=${encodeURIComponent(employer)}`)}
+            onSelect={(employer) => navigate(`/filings/companies?employer=${encodeURIComponent(employer)}`)}
           />
         </section>
       </div>

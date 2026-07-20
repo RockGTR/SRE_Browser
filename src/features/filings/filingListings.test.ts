@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { FilingRecord } from '../types/data';
-import { aggregateFilingListings, countDistinctCases, countDistinctCasesBy } from './filings';
+import type { FilingRecord } from '../../types/data';
+import { aggregateFilingListings, countDistinctCases, countDistinctCasesBy } from './filingListings';
 
 function filing(overrides: Partial<FilingRecord> = {}): FilingRecord {
   return {
